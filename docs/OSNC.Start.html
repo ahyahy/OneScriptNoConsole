@@ -1,0 +1,25 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Запуск с параметрами</TITLE>
+<META content="text/html; charset=Windows-1252" http-equiv="Content-Type">
+<LINK rel="stylesheet" type="text/css" href="mainstyle.css"></HEAD>
+<BODY id=bodyID class=dtBODY>
+<DIV id=nsbanner>
+<DIV id=bannerrow1>
+<TABLE class=bannerparthead cellSpacing=0>
+  <TBODY>
+  <TR id=hdr>
+    <TD class=runninghead></TD>
+    <TD class=product></TD></TR></TBODY></TABLE></DIV>
+<DIV id=TitleRow>
+<H1 class=dtH1>Запуск сценария командой с параметрами</H1></DIV></DIV>
+<DIV id=nstext>
+<P>Для запуска из командной строки исполняемому файлу <B>OneScriptNoConsole.exe</B> нужно передать два аргумента. Это путь до файла 
+<B>oscript.exe</B> и путь до файла стартового сценария <B>"*.os"</B>.</P>
+<P><PRE class=code>
+"...\OneScriptNoConsole.exe" /os="C:\Program Files\OneScript\bin\oscript.exe" /script="C:\888\os\Приложение.os"
+</PRE>
+<P>Порядок чередования ключей <B>"/os="</B> и <B>"/script="</B> при этом роли не играет. Программа проверит существование переданных 
+в ключах файлов и запустит сценарий на исполнение. Пути содержащие пробелы следует заключить в кавычки.</P>
+<P>При возникновении ошибок запуска в директории файла <B>OneScriptNoConsole.exe</B> будет создан файл <B>error.log</B>.
+<P></P>
+</DIV></BODY></HTML>

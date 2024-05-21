@@ -1,0 +1,91 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Создание EXE файла</TITLE>
+<META content="text/html; charset=Windows-1252" http-equiv="Content-Type">
+<LINK rel="stylesheet" type="text/css" href="mainstyle.css"></HEAD>
+<BODY id=bodyID class=dtBODY>
+<DIV id=nsbanner>
+<DIV id=bannerrow1>
+<TABLE class=bannerparthead cellSpacing=0>
+  <TBODY>
+  <TR id=hdr>
+    <TD class=runninghead></TD>
+    <TD class=product></TD></TR></TBODY></TABLE></DIV>
+<DIV id=TitleRow>
+<H1 class=dtH1>Создание EXE файла запуска стартового сценария</H1></DIV></DIV>
+<DIV id=nstext>
+<P>Если Вы создали приложение на <B>OneScript</B> и хотите его распространять Вам понадобиться создать для него <B>EXE</B> файл. И было бы здорово, 
+если в свойствах этого файла будет информация о версии, названии продукта, названии компании и т.д. Посмотрите как это можно 
+сделать с помощью <B>OneScriptNoConsole.exe</B>.</P>
+<P>На компьютере должна быть установлена программа <B>Microsoft Visual Studio</B>. Посредством неё будет произведена компиляция исполняемого файла. 
+Вы можете скомпилировать файл на другой машине и перенести его на машину пользователя. <B>Microsoft Visual Studio</B> требуется только во время 
+компиляция исполняемого файла.</P>
+<li>Скачайте с гитхаб <A href="" target="_blank"><B>ййййййййййййййййййййййййййййй</B></A> файл <B>OneScriptNoConsole.exe</B>.</li>
+<li>Поместите его в какой либо каталог и запустите.</li>
+<li>Программа попытается найти и прочитать из этого же каталога файл настроек <B>settings.cfg</B>.</li>
+<li>Не найдя его она создаст файл <B>error.log</B> в этом же каталоге, где опишет ошибку, а так же создаст по шаблону файл настроек <B>settings.cfg</B> такого содержимого.</li>
+<P><PRE class=code>
+
+# Имя exe файла вашего приложения. /outfilename="MyApp"
+#/outfilename=[string]
+
+# Путь до файла oscript.exe. /os="C:\Program Files\OneScript\bin\oscript.exe"
+#/os=[string]
+
+# Путь до запускаемого файла. Обычно это стартовый сценарий.
+# Для Windows это может выглядеть так: /script="C:\888\os\Приложение.os"
+# Для Linux это может выглядеть так: /script="/home/vlad/Projects/444/Приложение.os"
+#/script=[string]
+
+# Название компании.
+#/company=[string]
+
+# Краткое описание сборки.
+#/description=[string]
+
+# Авторское право на программу.
+#/copyright=[string]
+
+# Информация о продукте.
+#/product=[string]
+
+# Название сборки как информационного продукта.
+#/title=[string]
+
+# Сведения о торговой марке.
+#/trademark=[string]
+
+# Версия сборки. /version="1.0.0.0"
+#/version=[string]
+
+# Номер версии файла. /fileversion="1.0.0.0"
+#/fileversion=[string]
+</PRE>
+<P></P>
+<li>Раскомментируйте нужные Вам ключи и задайте их значения. После этого снова запустите файл <B>OneScriptNoConsole.exe</B>.</li>
+<li>В том же каталоге будет сформирован <B>EXE</B> файл с именем, заданным ключем <B>"/outfilename="</B>.</li>
+<li><B>MyApp</B> - это имя по умолчанию для ключа <B>"/outfilename="</B>.</li>
+<figure class="pic">
+	<img id="myImg01" src="GoldKey.png" alt="Свойства exe файла"><figcaption>Свойства exe файла</figcaption>
+	<div id="myModal01" class="modal">
+	  <span id="close01" class="close">×</span>
+	  <img id="img01" class="modal-content">
+	  <div id="caption">Свойства exe файла</div>
+	</div>
+</figure>
+<li>После этого можно удалить файлы <B>settings.cfg</B> и <B>error.log</B>. Все необходимые данные будут зашиты в исполняемый <B>EXE</B> файл.</li>
+<br>
+<P></P>
+<script>
+var img01 = document.getElementById('myImg01');
+var modal01 = document.getElementById('myModal01');
+var modalImg01 = document.getElementById("img01");
+img01.onclick = function(){
+    modal01.style.display = "block";
+    modalImg01.src = img01.src;
+}
+var span01 = document.getElementById("close01");
+span01.onclick = function(){ 
+    modal01.style.display = "none";
+}
+</script>
+</DIV></BODY></HTML>
