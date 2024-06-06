@@ -29,10 +29,14 @@ namespace OneScriptNoConsole
         private static string myEntryScript = "";
 
         private static string settings = @"
+# Значения ключей можно указывать в кавычках или без них.
+
 # Имя exe файла вашего приложения. /outfilename=""MyApp""
 #/outfilename=[string]
 
 # Путь до запускаемого файла. Обычно это стартовый сценарий.
+# Файл будет внедрен в exe файл. Извлечь стартовый сценарий можно будет
+# запустив exe файл с ключем /pullout.
 # Для Windows это может выглядеть так: /script=""C:\888\os\Приложение.os""
 # Для Linux это может выглядеть так: /script=""/home/vlad/Projects/444/Приложение.os""
 #/script=[string]
@@ -127,7 +131,8 @@ namespace OneScriptNoConsole
             }
             string set = File.ReadAllText(pathSet);
             string aLine;
-            string[] result1 = set.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            string[] result1 = set.Split(new string[] { "\u000a",  "\u000d"}, StringSplitOptions.RemoveEmptyEntries);
+
             for (int i = 0; i < result1.Length; i++)
             {
                 aLine = result1[i].Trim();
@@ -139,7 +144,6 @@ namespace OneScriptNoConsole
                 {
                     continue;
                 }
-
                 if (aLine.Substring(0, 13) == "/outfilename=")
                 {
                     outFileName = aLine.Replace("/outfilename=", "").Replace("\u0022", "");
@@ -248,7 +252,7 @@ namespace OneScriptNoConsole
                 @"[assembly: AssemblyFileVersion(""" + assemblyFileVersion + "\u0022)]" + Environment.NewLine +
                 @"";
             string typeProgram = @"" + Environment.NewLine +
-                @"using System; using System.Text; using System.IO; using System.Reflection; namespace osexe" + Environment.NewLine + 
+                @"using System; using System.Text; using System.IO; using System.Reflection; using ScriptEngine.HostedScript.Library; namespace osexe" + Environment.NewLine +
                 @"{{" + Environment.NewLine + 
                 @"	public class Program" + Environment.NewLine + 
                 @"	{{" + Environment.NewLine + 
@@ -258,14 +262,14 @@ namespace OneScriptNoConsole
                 @"		public static int Main(string[] args)" + Environment.NewLine + 
                 @"		{{" + Environment.NewLine + 
                 @"			// Если стартовый сценарий уже внедрен в exe файл, его можно извлечь." + Environment.NewLine + 
-                @"			// Код стартового сценария будет записан в "".os"" файл в той же директории." + Environment.NewLine + 
-                @"			// Ключ /extract" + Environment.NewLine + 
+                @"			// Код стартового сценария будет записан в "".os"" файл в той же директории." + Environment.NewLine +
+                @"			// Ключ /pullout" + Environment.NewLine + 
                 @"			if (args.Length > 0)" + Environment.NewLine + 
                 @"			{{" + Environment.NewLine + 
                 @"				if (args.Length == 1)" + Environment.NewLine + 
                 @"				{{" + Environment.NewLine + 
-                @"					string aLine = args[0].Trim();" + Environment.NewLine + 
-                @"					if (aLine.Substring(0, 8) == ""/extract"")" + Environment.NewLine + 
+                @"					string aLine = args[0].Trim();" + Environment.NewLine +
+                @"					if (aLine.Substring(0, 8) == ""/pullout"")" + Environment.NewLine + 
                 @"					{{" + Environment.NewLine + 
                 @"						// Извлекаем стартовый сценарий." + Environment.NewLine + 
                 @"						string fileName1 = Assembly.GetExecutingAssembly().Location.Replace(@"".exe"", @"".os"");" + Environment.NewLine + 
@@ -314,6 +318,7 @@ namespace OneScriptNoConsole
                 @"{{" + Environment.NewLine +
                 @"    class ExecuteScriptBehavior : AppBehavior, IHostApplication, ISystemLogWriter" + Environment.NewLine +
                 @"    {{" + Environment.NewLine +
+                @"        private static ArrayImpl attachByPath = new ArrayImpl();" + Environment.NewLine +
                 @"        private static string separator = Path.DirectorySeparatorChar.ToString();" + Environment.NewLine +
                 @"        private static string currentDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;" + Environment.NewLine +
                 @"        private static string pathEr = currentDirectory + separator + ""error.log"";" + Environment.NewLine +
@@ -329,11 +334,44 @@ namespace OneScriptNoConsole
                 @"            hostedScript.DebugController = DebugController;" + Environment.NewLine +
                 @"            hostedScript.CustomConfig = ScriptFileHelper.CustomConfigPath(_path);" + Environment.NewLine +
                 @"            ScriptFileHelper.OnBeforeScriptRead(hostedScript);" + Environment.NewLine +
+                @"            // Если в сценарии есть директива #Использовать, тогда закомментируем её и соберем имена сценариев на которые она указывает в attachByPath" + Environment.NewLine +
+                @"            // Иначе директива не сработает так как мы сценарий загружаем из строки и у него не срабатывает свойство Источник." + Environment.NewLine +
+                @"            string aLine;" + Environment.NewLine +
+                @"            string[] result1 = MyEntryScript.strMyEntryScript.Split(new string[] {{ ""\u000a"", ""\u000d"" }}, StringSplitOptions.RemoveEmptyEntries);" + Environment.NewLine +
+                @"            for (int i = 0; i < result1.Length; i++)" + Environment.NewLine +
+                @"            {{" + Environment.NewLine +
+                @"                aLine = result1[i].Trim();" + Environment.NewLine +
+                @"                try" + Environment.NewLine +
+                @"                {{" + Environment.NewLine +
+                @"                    bool isWin = System.Environment.OSVersion.VersionString.Contains(""Microsoft"");" + Environment.NewLine +
+                @"                    if (isWin && aLine.Contains(@""/"")) {{ continue; }}" + Environment.NewLine +
+                @"                    if (!isWin && aLine.Contains(@""\"")) {{ continue; }}" + Environment.NewLine +
+                @"                    if (aLine.Substring(0, 13) != @""#Использовать"") {{ continue; }}" + Environment.NewLine +
+                @"                    else" + Environment.NewLine +
+                @"                    {{" + Environment.NewLine +
+                @"                        string str = aLine.Replace(@""#Использовать"", """").Trim();" + Environment.NewLine +
+                @"                        if (isWin)" + Environment.NewLine +
+                @"                        {{" + Environment.NewLine +
+                @"                            if (str == ""\u0022"" + @"".\"" + ""\u0022"") {{ string path = @"".\Классы\""; if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i1 = 0; i1 < files.Length; i1++) {{ IValue ivalue = ValueFactory.Create(files[i1]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} path = @"".\Модули\""; if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i1 = 0; i1 < files.Length; i1++) {{ IValue ivalue = ValueFactory.Create(files[i1]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} }}" + Environment.NewLine +
+                @"                            if (str == ""\u0022"" + @""..\"" + ""\u0022"") {{ string path = @""..\Классы\""; if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i1 = 0; i1 < files.Length; i1++) {{ IValue ivalue = ValueFactory.Create(files[i1]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} path = @""..\Модули\""; if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i1 = 0; i1 < files.Length; i1++) {{ IValue ivalue = ValueFactory.Create(files[i1]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} }}" + Environment.NewLine +
+                @"                            if (!(str.Contains(@"".\"") || str.Contains(@""..\""))) {{ string[] result2 = str.Split(new string[] {{ "";"", ""\u000a"", ""\u000d"" }}, StringSplitOptions.RemoveEmptyEntries); string path = """"; for (int i1 = 0; i1 < result2.Length; i1++) {{ path = result2[i1].Replace(""\u0022"", """").Trim(); if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i2 = 0; i2 < files.Length; i2++) {{ IValue ivalue = ValueFactory.Create(files[i2]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} }} }}" + Environment.NewLine +
+                @"                        }}" + Environment.NewLine +
+                @"                        else" + Environment.NewLine +
+                @"                        {{" + Environment.NewLine +
+                @"                            if (str == ""\u0022"" + @""./"" + ""\u0022"") {{ string path = @""./Классы/""; if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i1 = 0; i1 < files.Length; i1++) {{ IValue ivalue = ValueFactory.Create(files[i1]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} path = @""./Модули/""; if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i1 = 0; i1 < files.Length; i1++) {{ IValue ivalue = ValueFactory.Create(files[i1]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} }}" + Environment.NewLine +
+                @"                            if (str == ""\u0022"" + @""../"" + ""\u0022"") {{ string path = @""../Классы/""; if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i1 = 0; i1 < files.Length; i1++) {{ IValue ivalue = ValueFactory.Create(files[i1]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} path = @""../Модули/""; if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i1 = 0; i1 < files.Length; i1++) {{ IValue ivalue = ValueFactory.Create(files[i1]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} }}" + Environment.NewLine +
+                @"                            if (!(str.Contains(@""./"") || str.Contains(@""../""))) {{ string[] result2 = str.Split(new string[] {{ "";"", ""\u000a"", ""\u000d"" }}, StringSplitOptions.RemoveEmptyEntries); string path = """"; for (int i1 = 0; i1 < result2.Length; i1++) {{ path = result2[i1].Replace(""\u0022"", """").Trim(); if (Directory.Exists(path)) {{ string[] files = Directory.GetFiles(path, ""*.os""); for (int i2 = 0; i2 < files.Length; i2++) {{ IValue ivalue = ValueFactory.Create(files[i2]); if (attachByPath.Find(ivalue) == ValueFactory.Create()) {{ attachByPath.Add(ivalue); }} }} }} }} }}" + Environment.NewLine +
+                @"                        }}" + Environment.NewLine +
+                @"                    }}" + Environment.NewLine +
+                @"                }}" + Environment.NewLine +
+                @"                catch {{ continue; }}" + Environment.NewLine +
+                @"            }}" + Environment.NewLine +
+                @"            MyEntryScript.strMyEntryScript = MyEntryScript.strMyEntryScript.Replace(@""#Использовать"", @""//gflvvdur#Использовать"");" + Environment.NewLine +
                 @"            var source = hostedScript.Loader.FromString(MyEntryScript.strMyEntryScript);" + Environment.NewLine +
                 @"            Process process;" + Environment.NewLine +
                 @"            try {{ process = hostedScript.CreateProcess(this, source); }}" + Environment.NewLine +
-                @"            catch (Exception e) {{ this.ShowExceptionInfo(e); return 1; }}" + Environment.NewLine +
-                @"            int result; try {{ result = process.Start(); }} catch (Exception ex) {{ WriteError(ex.Message); result = 1; }}" + Environment.NewLine +
+                @"            catch (Exception e) {{ this.ShowExceptionInfo(e); WriteError(e.Message); return 1; }}" + Environment.NewLine +
+                @"            int result; try {{ var compiler = hostedScript.EngineInstance.GetCompilerService(); for (int i = 0; i < attachByPath.Count(); i++) {{ FileInfo fi = new FileInfo(attachByPath.Get(i).AsString()); hostedScript.EngineInstance.AttachedScriptsFactory.AttachByPath(compiler, fi.FullName, fi.Name.Replace("".os"", """")); }} result = process.Start(); }} catch (Exception ex) {{ WriteError(ex.Message); result = 1; }}" + Environment.NewLine +
                 @"            hostedScript.Dispose();" + Environment.NewLine +
                 @"            ScriptFileHelper.OnAfterScriptExecute(hostedScript);" + Environment.NewLine +
                 @"            return result;" + Environment.NewLine +
@@ -343,7 +381,7 @@ namespace OneScriptNoConsole
                 @"        public void ShowExceptionInfo(Exception exc) {{ ConsoleHostImpl.ShowExceptionInfo(exc); }}" + Environment.NewLine +
                 @"        public bool InputString(out string result, string prompt, int maxLen, bool multiline) {{ return ConsoleHostImpl.InputString(out result, prompt, maxLen, multiline); }}" + Environment.NewLine +
                 @"        public string[] GetCommandLineArguments() {{ return _scriptArgs; }}" + Environment.NewLine +
-                @"        public void Write(string text) {{ Console.Error.WriteLine(text); }}" + Environment.NewLine +
+                @"        public void Write(string text) {{ Console.Error.WriteLine(text); WriteError(text); }}" + Environment.NewLine +
                 @"    }}" + Environment.NewLine +
                 @"}}" + Environment.NewLine +
                 @"";
@@ -466,9 +504,7 @@ namespace OneScriptNoConsole
                 currentDirectory + separator + separator + "Newtonsoft.Json.dll",
                 currentDirectory + separator + separator + "OneScript.Language.dll",
                 "Microsoft.CSharp.dll"};
-
             CompilerParams.ReferencedAssemblies.AddRange(references);
-
             var provider = new Microsoft.CSharp.CSharpCodeProvider();
             System.CodeDom.Compiler.CompilerResults compile = provider.CompileAssemblyFromSource(
                 CompilerParams, 
