@@ -131,7 +131,7 @@ namespace OneScriptNoConsole
             }
             string set = File.ReadAllText(pathSet);
             string aLine;
-            string[] result1 = set.Split(new string[] { "\u000a",  "\u000d"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] result1 = set.Split(new string[] { "\u000a", "\u000d" }, StringSplitOptions.RemoveEmptyEntries);
 
             for (int i = 0; i < result1.Length; i++)
             {
@@ -253,58 +253,58 @@ namespace OneScriptNoConsole
                 @"";
             string typeProgram = @"" + Environment.NewLine +
                 @"using System; using System.Text; using System.IO; using System.Reflection; using ScriptEngine.HostedScript.Library; namespace osexe" + Environment.NewLine +
-                @"{{" + Environment.NewLine + 
-                @"	public class Program" + Environment.NewLine + 
-                @"	{{" + Environment.NewLine + 
-                @"		private static string separator = Path.DirectorySeparatorChar.ToString();" + Environment.NewLine + 
-                @"		private static string currentDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;" + Environment.NewLine + 
-                @"		private static string pathEr = currentDirectory + separator + ""error.log"";" + Environment.NewLine + 
-                @"		public static int Main(string[] args)" + Environment.NewLine + 
-                @"		{{" + Environment.NewLine + 
-                @"			// Если стартовый сценарий уже внедрен в exe файл, его можно извлечь." + Environment.NewLine + 
+                @"{{" + Environment.NewLine +
+                @"	public class Program" + Environment.NewLine +
+                @"	{{" + Environment.NewLine +
+                @"		private static string separator = Path.DirectorySeparatorChar.ToString();" + Environment.NewLine +
+                @"		private static string currentDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;" + Environment.NewLine +
+                @"		private static string pathEr = currentDirectory + separator + ""error.log"";" + Environment.NewLine +
+                @"		public static int Main(string[] args)" + Environment.NewLine +
+                @"		{{" + Environment.NewLine +
+                @"			// Если стартовый сценарий уже внедрен в exe файл, его можно извлечь." + Environment.NewLine +
                 @"			// Код стартового сценария будет записан в "".os"" файл в той же директории." + Environment.NewLine +
-                @"			// Ключ /pullout" + Environment.NewLine + 
-                @"			if (args.Length > 0)" + Environment.NewLine + 
-                @"			{{" + Environment.NewLine + 
-                @"				if (args.Length == 1)" + Environment.NewLine + 
-                @"				{{" + Environment.NewLine + 
+                @"			// Ключ /pullout" + Environment.NewLine +
+                @"			if (args.Length > 0)" + Environment.NewLine +
+                @"			{{" + Environment.NewLine +
+                @"				if (args.Length == 1)" + Environment.NewLine +
+                @"				{{" + Environment.NewLine +
                 @"					string aLine = args[0].Trim();" + Environment.NewLine +
-                @"					if (aLine.Substring(0, 8) == ""/pullout"")" + Environment.NewLine + 
-                @"					{{" + Environment.NewLine + 
-                @"						// Извлекаем стартовый сценарий." + Environment.NewLine + 
-                @"						string fileName1 = Assembly.GetExecutingAssembly().Location.Replace(@"".exe"", @"".os"");" + Environment.NewLine + 
-                @"						string fileName2;" + Environment.NewLine + 
-                @"						if (File.Exists(fileName1))" + Environment.NewLine + 
-                @"                        {{" + Environment.NewLine + 
-                @"							int index = 1;" + Environment.NewLine + 
-                @"                            while (index < 4)" + Environment.NewLine + 
-                @"                            {{" + Environment.NewLine + 
-                @"								fileName2 = Assembly.GetExecutingAssembly().Location.Replace(@"".exe"", ""("" + index + "").os"");" + Environment.NewLine + 
-                @"								if (!File.Exists(fileName2))" + Environment.NewLine + 
-                @"								{{" + Environment.NewLine + 
-                @"									File.WriteAllText(fileName2, MyEntryScript.strMyEntryScript, Encoding.UTF8);" + Environment.NewLine + 
-                @"									Environment.Exit(0);" + Environment.NewLine + 
-                @"								}}" + Environment.NewLine + 
-                @"								else" + Environment.NewLine + 
-                @"								{{" + Environment.NewLine + 
-                @"									index++;" + Environment.NewLine + 
-                @"								}}" + Environment.NewLine + 
-                @"							}}" + Environment.NewLine + 
-                @"						}}" + Environment.NewLine + 
-                @"                        else" + Environment.NewLine + 
-                @"                        {{" + Environment.NewLine + 
-                @"							File.WriteAllText(fileName1, MyEntryScript.strMyEntryScript, Encoding.UTF8);" + Environment.NewLine + 
-                @"						}}" + Environment.NewLine + 
-                @"						Environment.Exit(0);" + Environment.NewLine + 
-                @"					}}" + Environment.NewLine + 
-                @"				}}" + Environment.NewLine + 
-                @"			}}" + Environment.NewLine + 
-                @"" + Environment.NewLine + 
-                @"			string path;" + Environment.NewLine + 
-                @"			path = currentDirectory + separator + ""ScriptEngine.dll""; if (!File.Exists(path)) {{ try {{ FileStream fs = new FileStream(path, FileMode.Create); BinaryWriter br = new BinaryWriter(fs); byte[] bin = Convert.FromBase64String(ScriptEnginedll.strScriptEnginedll); br.Write(bin, 0, bin.Length); fs.Close(); br.Close(); }} catch {{ WriteError(""Не удалось записать файл "" + path); }} }}" + Environment.NewLine + 
-                @"			path = currentDirectory + separator + ""ScriptEngine.HostedScript.dll""; if (!File.Exists(path)) {{ try {{ FileStream fs = new FileStream(path, FileMode.Create); BinaryWriter br = new BinaryWriter(fs); byte[] bin = Convert.FromBase64String(ScriptEngineHostedScriptdll.strScriptEngineHostedScriptdll); br.Write(bin, 0, bin.Length); fs.Close(); br.Close(); }} catch {{ WriteError(""Не удалось записать файл "" + path); }} }}" + Environment.NewLine + 
-                @"			path = currentDirectory + separator + ""OneScript.Language.dll""; if (!File.Exists(path)) {{ try {{ FileStream fs = new FileStream(path, FileMode.Create); BinaryWriter br = new BinaryWriter(fs); byte[] bin = Convert.FromBase64String(OneScriptLanguagedll.strOneScriptLanguagedll); br.Write(bin, 0, bin.Length); fs.Close(); br.Close(); }} catch {{ WriteError(""Не удалось записать файл "" + path); }} }}" + Environment.NewLine + 
-                @"			path = currentDirectory + separator + ""Newtonsoft.Json.dll""; if (!File.Exists(path)) {{ try {{ FileStream fs = new FileStream(path, FileMode.Create); BinaryWriter br = new BinaryWriter(fs); byte[] bin = Convert.FromBase64String(NewtonsoftJsondll.strNewtonsoftJsondll); br.Write(bin, 0, bin.Length); fs.Close(); br.Close(); }} catch {{ WriteError(""Не удалось записать файл "" + path); }} }}" + Environment.NewLine + 
+                @"					if (aLine.Substring(0, 8) == ""/pullout"")" + Environment.NewLine +
+                @"					{{" + Environment.NewLine +
+                @"						// Извлекаем стартовый сценарий." + Environment.NewLine +
+                @"						string fileName1 = Assembly.GetExecutingAssembly().Location.Replace(@"".exe"", @"".os"");" + Environment.NewLine +
+                @"						string fileName2;" + Environment.NewLine +
+                @"						if (File.Exists(fileName1))" + Environment.NewLine +
+                @"                        {{" + Environment.NewLine +
+                @"							int index = 1;" + Environment.NewLine +
+                @"                            while (index < 4)" + Environment.NewLine +
+                @"                            {{" + Environment.NewLine +
+                @"								fileName2 = Assembly.GetExecutingAssembly().Location.Replace(@"".exe"", ""("" + index + "").os"");" + Environment.NewLine +
+                @"								if (!File.Exists(fileName2))" + Environment.NewLine +
+                @"								{{" + Environment.NewLine +
+                @"									File.WriteAllText(fileName2, MyEntryScript.strMyEntryScript, Encoding.UTF8);" + Environment.NewLine +
+                @"									Environment.Exit(0);" + Environment.NewLine +
+                @"								}}" + Environment.NewLine +
+                @"								else" + Environment.NewLine +
+                @"								{{" + Environment.NewLine +
+                @"									index++;" + Environment.NewLine +
+                @"								}}" + Environment.NewLine +
+                @"							}}" + Environment.NewLine +
+                @"						}}" + Environment.NewLine +
+                @"                        else" + Environment.NewLine +
+                @"                        {{" + Environment.NewLine +
+                @"							File.WriteAllText(fileName1, MyEntryScript.strMyEntryScript, Encoding.UTF8);" + Environment.NewLine +
+                @"						}}" + Environment.NewLine +
+                @"						Environment.Exit(0);" + Environment.NewLine +
+                @"					}}" + Environment.NewLine +
+                @"				}}" + Environment.NewLine +
+                @"			}}" + Environment.NewLine +
+                @"			string path;" + Environment.NewLine +
+                @"			FileStream fs; BinaryWriter br;" + Environment.NewLine +
+                @"			path = currentDirectory + separator + ""ScriptEngine.dll""; if (!File.Exists(path)) {{ try {{ fs = new FileStream(path, FileMode.Create); br = new BinaryWriter(fs); byte[] bin = ScriptEnginedll.Get(); br.Write(bin, 0, bin.Length); fs.Close(); br.Close(); }} catch {{ WriteError(""Не удалось записать файл "" + path); }} }}" + Environment.NewLine +
+                @"			path = currentDirectory + separator + ""ScriptEngine.HostedScript.dll""; if (!File.Exists(path)) {{ try {{ fs = new FileStream(path, FileMode.Create); br = new BinaryWriter(fs); byte[] bin = ScriptEngineHostedScriptdll.Get(); br.Write(bin, 0, bin.Length); fs.Close(); br.Close(); }} catch {{ WriteError(""Не удалось записать файл "" + path); }} }}" + Environment.NewLine +
+                @"			path = currentDirectory + separator + ""OneScript.Language.dll""; if (!File.Exists(path)) {{ try {{ fs = new FileStream(path, FileMode.Create); br = new BinaryWriter(fs); byte[] bin = OneScriptLanguagedll.Get(); br.Write(bin, 0, bin.Length); fs.Close(); br.Close(); }} catch {{ WriteError(""Не удалось записать файл "" + path); }} }}" + Environment.NewLine +
+                @"			path = currentDirectory + separator + ""Newtonsoft.Json.dll""; if (!File.Exists(path)) {{ try {{ fs = new FileStream(path, FileMode.Create); br = new BinaryWriter(fs); byte[] bin = NewtonsoftJsondll.Get(); br.Write(bin, 0, bin.Length); fs.Close(); br.Close(); }} catch {{ WriteError(""Не удалось записать файл "" + path); }} }}" + Environment.NewLine +
                 @"			try {{ Starter starter = new Starter(); return starter.Start(); }} " + Environment.NewLine +
                 @"			catch (Exception ex) {{ WriteError("""" + ex.Message); }} return 1;" + Environment.NewLine +
                 @"		}}" + Environment.NewLine +
@@ -423,21 +423,20 @@ namespace OneScriptNoConsole
                 @"using System; using System.Text; namespace osexe {{ internal static class Output {{ private static Encoding _encoding; static Output() {{ Init(); }} public static Action<string> Write {{ get; private set; }} public static ConsoleColor TextColor {{ get {{ return Console.ForegroundColor; }} set {{ Console.ForegroundColor = value; }} }} public static Encoding ConsoleOutputEncoding {{ get {{ return _encoding; }} set {{ _encoding = value; Init(); }} }} private static void Init() {{ if (ConsoleOutputEncoding == null) {{ Write = WriteStandardConsole; }} else {{ Write = WriteEncodedStream; }} }} public static void WriteLine(string text) {{ Write(text); WriteLine(); }} public static void WriteLine() {{ Write(Environment.NewLine); }} private static void WriteStandardConsole(string text) {{ Console.Write(text); }} private static void WriteEncodedStream(string text) {{ using (var stdout = Console.OpenStandardOutput()) {{ var enc = ConsoleOutputEncoding; var bytes = enc.GetBytes(text); stdout.Write(bytes, 0, bytes.Length); }} }} }} }}" + Environment.NewLine +
                 @"";
             string typeScriptEnginedll = @"" + Environment.NewLine +
-                @"namespace osexe {{ public static class ScriptEnginedll {{ public static string strScriptEnginedll = @""" + scriptEngine + @"""; }} }}" + Environment.NewLine +
+                @"using System; namespace osexe {{ public static class ScriptEnginedll {{ public static string str = @""" + scriptEngine + @"""; public static byte[] Get() {{ return Convert.FromBase64String(ScriptEnginedll.str); }} }} }}" + Environment.NewLine +
                 @"";
             string typeScriptEngineHostedScriptdll = @"" + Environment.NewLine +
-                @"namespace osexe {{ public static class ScriptEngineHostedScriptdll {{ public static string strScriptEngineHostedScriptdll = @""" + scriptEngineHostedScript + @"""; }} }}" + Environment.NewLine +
+                @"using System; namespace osexe {{ public static class ScriptEngineHostedScriptdll {{ public static string str = @""" + scriptEngineHostedScript + @"""; public static byte[] Get() {{ return Convert.FromBase64String(ScriptEngineHostedScriptdll.str); }} }} }}" + Environment.NewLine +
                 @"";
             string typeOneScriptLanguagedll = @"" + Environment.NewLine +
-                @"namespace osexe {{ public static class OneScriptLanguagedll {{ public static string strOneScriptLanguagedll = @""" + oneScriptLanguage + @"""; }} }}" + Environment.NewLine +
+                @"using System; namespace osexe {{ public static class OneScriptLanguagedll {{ public static string str = @""" + oneScriptLanguage + @"""; public static byte[] Get() {{ return Convert.FromBase64String(OneScriptLanguagedll.str  ); }} }} }}" + Environment.NewLine +
                 @"";
             string typeNewtonsoftJsondll = @"" + Environment.NewLine +
-                @"namespace osexe {{ public static class NewtonsoftJsondll {{ public static string strNewtonsoftJsondll = @""" + newtonsoftJson + @"""; }} }}" + Environment.NewLine +
+                @"using System; namespace osexe {{ public static class NewtonsoftJsondll {{ public static string str = @""" + newtonsoftJson + @"""; public static byte[] Get() {{ return Convert.FromBase64String(NewtonsoftJsondll.str); }} }} }}" + Environment.NewLine +
                 @"";
             string typeMyEntryScript = @"" + Environment.NewLine +
                 @"namespace osexe {{ public static class MyEntryScript {{ public static string strMyEntryScript = @""" + myEntryScript.Replace("\u0022", "\u0022\u0022") + @"""; }} }}" + Environment.NewLine +
                 @"";
-
             var assemCode = String.Format(assem, "");
             var ProgramCode = String.Format(typeProgram, "Program");
             var StarterCode = String.Format(typeStarter, "Starter");
@@ -494,7 +493,7 @@ namespace OneScriptNoConsole
                 CompilerOptions = "/optimize /target:winexe"
             };
 
-            string[] references = { 
+            string[] references = {
                 "System.dll",
                 "System.Core.dll",
                 "System.Net.Http.dll",
@@ -507,7 +506,7 @@ namespace OneScriptNoConsole
             CompilerParams.ReferencedAssemblies.AddRange(references);
             var provider = new Microsoft.CSharp.CSharpCodeProvider();
             System.CodeDom.Compiler.CompilerResults compile = provider.CompileAssemblyFromSource(
-                CompilerParams, 
+                CompilerParams,
                 new string[] {
                     assemCode,
                     ProgramCode,
