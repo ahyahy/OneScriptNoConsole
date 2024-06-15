@@ -395,13 +395,13 @@ namespace OneScriptNoConsole
             var MyEntryScriptCode = String.Format(typeMyEntryScript, "MyEntryScript");
 
             //// Для просмотра компилируемых файлов раскомментируйте строки ниже.
-            System.IO.File.WriteAllText(currentDirectory + separator + separator + "code.txt",
-                "assemCode======================================" + Environment.NewLine + assemCode + Environment.NewLine +
-                "ProgramCode====================================" + Environment.NewLine + ProgramCode + Environment.NewLine +
-                "StarterCode====================================" + Environment.NewLine + StarterCode + Environment.NewLine +
-                "HostConsoleCode====================================" + Environment.NewLine + HostConsoleCode + Environment.NewLine +
-                "MyEntryScriptCode==============================" + Environment.NewLine + MyEntryScriptCode
-                );
+            //System.IO.File.WriteAllText(currentDirectory + separator + separator + "code.txt",
+            //    "assemCode======================================" + Environment.NewLine + assemCode + Environment.NewLine +
+            //    "ProgramCode====================================" + Environment.NewLine + ProgramCode + Environment.NewLine +
+            //    "StarterCode====================================" + Environment.NewLine + StarterCode + Environment.NewLine +
+            //    "HostConsoleCode====================================" + Environment.NewLine + HostConsoleCode + Environment.NewLine +
+            //    "MyEntryScriptCode==============================" + Environment.NewLine + MyEntryScriptCode
+            //    );
 
             var CompilerParams = new System.CodeDom.Compiler.CompilerParameters
             {
