@@ -25,6 +25,7 @@ namespace OneScriptNoConsole
         private static string assemblyVersion = "0.0.0.0";
         private static string assemblyFileVersion = "0.0.0.0";
         private static string myEntryScript = "";
+        private static string startFrom = "";
 
         [STAThread]
         static void Main(string[] args)
@@ -69,6 +70,10 @@ namespace OneScriptNoConsole
                     {
                         myEntryScript = File.ReadAllText(script2.Replace("\u0022", ""), Encoding.UTF8);
                     }
+                }
+                else if (aLine.Substring(0, 11) == "/startFrom=")
+                {
+                    startFrom = aLine.Replace("/startFrom=", "").Replace("\u0022", "");
                 }
                 else if (aLine.Substring(0, 9) == "/company=")
                 {
@@ -270,6 +275,7 @@ namespace OneScriptNoConsole
                 @"        private static string pathEr = currentDirectory + separator + ""error.log"";" + Environment.NewLine +
                 @"        private static string prefix = """" + Environment.NewLine + DateTime.Now + Environment.NewLine;" + Environment.NewLine +
                 @"        private static ArrayImpl attachByPath = new ArrayImpl();" + Environment.NewLine +
+                @"        private static string startFrom = """ + startFrom + @""";" + Environment.NewLine +
                 @"        public int Start()" + Environment.NewLine +
                 @"        {{" + Environment.NewLine +
                 @"            var hostedScript = new HostedScriptEngine();" + Environment.NewLine +
@@ -307,7 +313,17 @@ namespace OneScriptNoConsole
                 @"                catch {{ continue; }}" + Environment.NewLine +
                 @"            }}" + Environment.NewLine +
                 @"            MyEntryScript.strMyEntryScript = MyEntryScript.strMyEntryScript.Replace(@""#Использовать"", @""//gflvvdur#Использовать"");" + Environment.NewLine +
-                @"            var source = hostedScript.Loader.FromString(MyEntryScript.strMyEntryScript);" + Environment.NewLine +
+                @"            ScriptEngine.Environment.ICodeSource source;" + Environment.NewLine +
+                @"            if (startFrom == ""file"")" + Environment.NewLine +
+                @"            {{" + Environment.NewLine +
+                @"                string strEntryScript = MyEntryScript.strMyEntryScript.Replace(@""//gflvvdur#Использовать"", @""#Использовать"");" + Environment.NewLine +
+                @"                File.WriteAllText(currentDirectory + separator + ""temp.os"", strEntryScript, Encoding.UTF8);" + Environment.NewLine +
+                @"                source = hostedScript.Loader.FromFile(currentDirectory + separator + ""temp.os"");" + Environment.NewLine +
+                @"            }}" + Environment.NewLine +
+                @"            else" + Environment.NewLine +
+                @"            {{" + Environment.NewLine +
+                @"                source = hostedScript.Loader.FromString(MyEntryScript.strMyEntryScript);" + Environment.NewLine +
+                @"            }}" + Environment.NewLine +
                 @"            Process process = hostedScript.CreateProcess(new HostConsole(), source);" + Environment.NewLine +
                 @"            try" + Environment.NewLine +
                 @"            {{" + Environment.NewLine +
@@ -455,6 +471,15 @@ namespace OneScriptNoConsole
 # Для Windows это может выглядеть так: /script=""C:\777\Приложение.os""
 # Для Linux это может выглядеть так: /script=""/home/vlad/Projects/444/Приложение.os""
 #/script=[string]
+
+# Источник сценария. Или файл на диске, или строка с текстом сценария, внедренная в exe файл.
+# Сценарии не использующие пакеты односкрипта из каталога lib могут быть запущены из строки, 
+# внедренной в exe файл. Если же будут задействованы пакеты односкрипта из каталога lib
+# во избежание ошибок файл сценария необходимо будет сначала записать на диск.
+# Сценарий будет записан под именем temp.os а затем запущен.
+# ""file"" - старт из файла (по умолчанию)
+# ""string"" - старт из строки
+/startFrom=""file""
 
 # Название компании.
 #/company=[string]
