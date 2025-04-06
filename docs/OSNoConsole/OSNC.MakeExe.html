@@ -1,0 +1,136 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+    <TITLE>Создание EXE файла</TITLE>
+    <META content="text/html; charset=Windows-1252" http-equiv="Content-Type">
+    <LINK rel="stylesheet" type="text/css" href="mainstyle.css">
+	<script defer src="mobilstyle.js"></script>
+</HEAD>
+<BODY id=bodyID class=dtBODY>
+    <DIV id=nsbanner>
+        <DIV id=bannerrow1>
+            <TABLE class=bannerparthead cellSpacing=0>
+                <TBODY>
+                    <TR id=hdr>
+                        <TD class=runninghead></TD>
+                        <TD class=product></TD>
+                    </TR>
+                </TBODY>
+            </TABLE>
+        </DIV>
+        <DIV id=TitleRow>
+            <H1 class=dtH1>Создание EXE файла запуска стартового сценария</H1>
+        </DIV>
+    </DIV>
+    <DIV id=nstext>
+        <P>
+            Если Вы создали приложение на <B>OneScript</B> и хотите его распространять удобно было бы создать для него <B>EXE</B> файл. И было бы здорово,
+            если в свойствах этого файла будет информация о версии, названии продукта, названии компании и т.д. Посмотрите как это можно
+            сделать с помощью <B>OneScriptNoConsole.exe</B>.
+        </P>
+        <P></P>
+        <li>Скачайте с гитхаб <A href="https://github.com/ahyahy/OneScriptNoConsole" target="_blank"><B>OneScriptNoConsole</B></A> файл <B>OneScriptNoConsole.zip</B>.</li>
+        <li>Распакуйте, поместите <B>OneScriptNoConsole.exe</B> в какой либо каталог.</li>
+        <li>
+            В этот же каталог скопируйте библиотеки односкрипта, необходимые при компиляции. Они находятся в каталоге <B>bin</B> с установленным <B>OneScript</B>.
+            <ul>
+                <li><B>ScriptEngine.dll</B></li>
+                <li><B>ScriptEngine.HostedScript.dll</B></li>
+                <li><B>OneScript.Language.dll</B></li>
+                <li><B>Newtonsoft.Json.dll</B></li>
+                <P>Версией этих библиотек будет определяться версия односкрипта.</P>
+            </ul>
+        </li>
+        <li>Запустите <B>OneScriptNoConsole.exe</B>.</li>
+        <li>Программа попытается найти и прочитать из этого же каталога файл настроек <B>settings.cfg</B>.</li>
+        <li>Не найдя его она создаст файл <B>error.log</B> в этом же каталоге, где опишет ошибку, а так же создаст по шаблону файл настроек <B>settings.cfg</B> такого содержимого.</li>
+        <P>
+<PRE class=code>
+# Значения ключей можно указывать в кавычках или без них.
+
+# Имя exe файла вашего приложения. /outfilename=""MyApp""
+#/outfilename=[string]
+
+# Путь до запускаемого файла. Обычно это стартовый сценарий.
+# Файл будет внедрен в exe файл. Извлечь стартовый сценарий можно будет
+# запустив exe файл с ключем /pullout.
+# Для Windows это может выглядеть так: /script=""C:\777\Приложение.os""
+# Для Linux это может выглядеть так: /script=""/home/vlad/Projects/444/Приложение.os""
+#/script=[string]
+
+# Источник сценария. Или файл на диске, или строка с текстом сценария, внедренная в exe файл.
+# Сценарии не использующие пакеты односкрипта из каталога lib могут быть запущены из строки, 
+# внедренной в exe файл. Если же будут задействованы пакеты односкрипта из каталога lib
+# во избежание ошибок файл сценария необходимо будет сначала записать на диск.
+# Сценарий будет записан под именем temp.os а затем запущен.
+# "file" - старт из файла (по умолчанию)
+# "string" - старт из строки
+/startFrom="string"
+
+# Название компании.
+#/company=[string]
+
+# Краткое описание сборки.
+#/description=[string]
+
+# Авторское право на программу.
+#/copyright=[string]
+
+# Информация о продукте.
+#/product=[string]
+
+# Название сборки как информационного продукта.
+#/title=[string]
+
+# Сведения о торговой марке.
+#/trademark=[string]
+
+# Версия сборки. /version=""1.0.0.0""
+#/version=[string]
+
+# Номер версии файла. /fileversion=""1.0.0.0""
+#/fileversion=[string]
+</PRE>
+        <P></P>
+        <li>Раскомментируйте нужные Вам ключи и задайте их значения. После этого снова запустите файл <B>OneScriptNoConsole.exe</B>.</li>
+        <li>В том же каталоге будет сформирован <B>EXE</B> файл с именем, заданным ключем <B>"/outfilename="</B>.</li>
+        <li><B>MyApp</B> - это имя по умолчанию для ключа <B>"/outfilename="</B>.</li>
+        <figure>
+			<div style="display: flex; flex-wrap: wrap;">
+				<div style="flex-direction: row;">
+					<div style="flex-direction: column;">
+						<img class=fitimg id="myImg01" src="GoldKey.png" alt="Свойства exe файла" onclick="clickimg(event)">
+						<div id="myModal01" class="modal">
+							<span id="close01" class="close">×</span>
+							<img id="img01" class="modal-content">
+							<div id="caption">Свойства exe файла</div>
+						</div>
+					</div>
+					<div style="flex-direction: column;">Свойства exe файла</div>
+				</div>
+			</div>
+        </figure>
+        <li>
+            В том же каталоге будет сформирован файл <B>oscript.cfg</B>, каталог <B>lib</B> с файлом <B>package-loader.os</B>. Не удаляйте четыре файла библиотек односкрипта.
+            В каталог <B>lib</B> при необходимости скопируйте нужные Вам пакеты библиотек. В большинстве случаев это не требуется.
+            Обратите внимание, наш файл <B>oscript.cfg</B> будет немного отличаться от односкриптового файла <B>oscript.cfg</B> строкой:
+            <P>
+                <PRE class=code>
+lib.system = lib
+</PRE>
+                Так что простое копирование из каталога <B>bin</B> может привести к неудачному запуску.
+        </li>
+        <li>
+            После этого можно удалить файлы <B>settings.cfg</B>, <B>error.log</B> и файл стартового сценария. Файл стартового сценария будет интегрирован
+            в исполняемый <B>EXE</B> файл.
+        </li>
+        <P>Так как окна терминала у нас не будет все сообщения при компиляции и при работе скомпилированной программы будут записаны в файл <B>error.log</B>.</P>
+        <P>
+            Если вы запускаете скомпилированный <B>EXE</B> файл в терминале не забудьте перейти командой <B>cd</B> в каталог программы.
+            При создании ярлыка программы так же нужно будет указать рабочий каталог программы.
+        </P>
+        <P></P>
+        <br>
+    </DIV>
+</BODY>
+</HTML>
